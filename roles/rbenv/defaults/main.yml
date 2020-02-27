@@ -1,0 +1,18 @@
+rbenv:
+  root: "{{ ansible_env.HOME }}/.rbenv"
+  depends:
+    - autoconf
+    - bison
+    - build-essential
+    - libffi-dev
+    - libgdbm-dev
+    - libgdbm6
+    - libncurses5-dev
+    - libreadline6-dev
+    - libssl-dev
+    - libyaml-dev
+    - subversion
+    - zlib1g-dev
+  versions:
+    - 2.7.0
+  default: 2.7.0

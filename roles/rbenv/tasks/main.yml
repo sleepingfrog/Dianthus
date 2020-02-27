@@ -1,0 +1,42 @@
+- name: install depends
+  apt:
+    name: "{{ rbenv.depends }}"
+  become: true
+
+- name: clone repos
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { repo: "https://github.com/rbenv/rbenv.git",      dest: "{{ rbenv.root }}" }
+    - { repo: "https://github.com/rbenv/ruby-build.git", dest: "{{ rbenv.root }}/plugins/ruby-build" }
+
+- name: profile
+  blockinfile:
+    marker: "# rbenv {mark}"
+    path: "{{ ansible_env.HOME }}/.profile"
+    block: |
+      export PATH="{{ rbenv.root }}/bin:$PATH"
+      eval "$(rbenv init -)"
+
+- name: check versions
+  shell: /bin/bash -lc "{{ rbenv.root }}/bin/rbenv versions --bare"
+  register: rbenv_versions
+  changed_when: false
+  failed_when: false
+
+- name: install versions
+  shell: /bin/bash -lc "{{ rbenv.root }}/bin/rbenv install --skip-existing {{ item }}"
+  with_items: "{{ rbenv.versions }}"
+  when: "item not in rbenv_versions.stdout"
+
+- name: check global
+  shell: /bin/bash -lc "{{ rbenv.root }}/bin/rbenv global"
+  register: rbenv_global
+  changed_when: false
+  failed_when: false
+
+- name: set global {{ rbenv.default }}
+  shell: /bin/bash -lc "{{ rbenv.root }}/bin/rbenv global {{ rbenv.default }} && {{ rbenv.root }}/bin/rbenv rehash"
+  when: "rbenv.default not in rbenv_global.stdout"
+
