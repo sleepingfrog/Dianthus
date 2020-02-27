@@ -1,6 +1,14 @@
 - name: install!
   apt:
     name:
-      - vim
+      - cloc
+      - dnsutils
       - emacs
+      - git
+      - jq
+      - nkf
+      - ranger
+      - tig
+      - vim
+      - w3m
   become: true
