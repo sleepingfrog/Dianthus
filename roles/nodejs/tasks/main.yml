@@ -1,0 +1,44 @@
+- name: gpg
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+  become: true
+
+- name: nodesource
+  blockinfile:
+    path: /etc/apt/sources.list.d/nodesource.list
+    block:
+      deb https://deb.nodesource.com/node_12.x eoan main
+      deb-src https://deb.nodesource.com/node_12.x eoan main
+    create: true
+  become: true
+
+- name: required
+  apt:
+    name:
+      - gcc
+      - g++
+      - make
+  become: true
+
+- name: install
+  apt:
+    name: nodejs
+  become: true
+
+- name: yarn | gpg
+  apt_key:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+  become: true
+
+- name: yarn | source list
+  blockinfile:
+    path: /etc/apt/sources.list.d/yarn.list
+    block:
+      deb https://dl.yarnpkg.com/debian/ stable main
+    create: true
+  become: true
+
+- name: yarn | install
+  apt:
+    name: yarn
+  become: true

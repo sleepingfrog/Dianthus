@@ -3,3 +3,4 @@
   roles:
     - role: toybox
     - role: rbenv
+    - role: nodejs
